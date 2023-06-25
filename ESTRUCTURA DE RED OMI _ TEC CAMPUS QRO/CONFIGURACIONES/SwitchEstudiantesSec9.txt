@@ -1,0 +1,100 @@
+!=======================================================================================
+!=======================
+! Switch_Estudiantes_Secundaria_9
+! Device: Cisco 2960
+!=======================
+
+en
+clock set 13:25:00 Jun 12 2023
+
+config t
+hostname Switch_Estudiantes_Secundaria_9
+no ip domain-lookup
+
+! Password encryption
+service password-encryption
+
+! Users
+username Admin privilege 15 secret tc2006b
+username intern privilege 2 secret tc2006b
+
+ip domain-name OMITECQRO.mx
+crypto key generate rsa
+yes
+1024
+
+! Passwords for User Access
+enable service tc2006b
+
+line con 0
+    login local
+    logging synchronous
+
+line vty 0 2
+    transport input ssh
+    login local
+    logging synchronous
+
+! Banner
+
+banner motd #
+@@@@@@@@@@@@@@             @@@@@@@@@@@@@
+@@@YAO@@@@@          @;       @@@@DAMA@@
+@@@@@@@            @@@   @@      @@@@@@@
+@@@@            @@@@  ;@@@          @@@@
+@@@           @@@:  @@@@  @@  @      @@@
+@@         ;@@@  ;@@@:  @@@;  ;@@      @
+@        @@@:  @@@@  ;@@@   @@@:       @        
+       @@@  ,@@@   @@@;  ;@@@   @        
+       @@  @@@  @@@@   @@@@  :@@        
+        @  @  ;@@;  @@@@   @@@;          
+@            :@@   @@;  :@@@           @
+@@           :@   @@   :@;            @@
+@@@               ;:                 @@@
+@@@@@      @@@@@@@@@@@@@@@@@@@     @@@@@
+@@@@@@@@       @@@@@@@@@@@       @@@@@@@
+@@MIKE@@@@@@      @@@@       @@@@@@@@@@@
+===============================================================================
+========================= ¡Advertencia importante! ============================
+Antes de acceder a cualquier dispositivo de red en el Tecnológico de Monterrey
+es crucial que tena una autorizacion por escrito del administrador del evento o
+de la red, recuerda que el acceso no autorizado a estos dispositivos es un delito
+y puede ser sancionado por la ley y la institucion en caso de ser necesario con
+una FIA. Protejamos juntos nuestra red escolar y promovamos el respeto por la 
+propiedad ajena.
+=============================================================================== #
+
+vtp domain OMITECQRO
+vtp mode client
+vtp password tc2006b
+
+
+!Interfaces (Puertos de Acceso)
+!Asignacion de interfaces extra para cada Access Point para la redundancia
+int range f0/1-24
+    desc VLAN para Switches_Secundarios_Secundaria
+    switchport mode access
+    switchport access vlan 100
+
+! Interfaces (Trunk Ports)
+int range g0/1
+    desc Puerto Trunk Switches_Secundarios_Secundaria
+    switchport mode trunk
+    no shutdown
+
+! Admin VLAN
+
+int vlan 911
+    desc Admin VLAN
+    ip address 172.16.28.222 255.255.255.192
+    no shut
+    exit
+
+! Default Route
+ip default-gateway 172.16.28.254
+
+
+
+!---------------------------------------------------------------------------|
+!           FIN DE LA CONFIGURACION DE SWITCHS SECUNDARIA                   |
+!---------------------------------------------------------------------------|
